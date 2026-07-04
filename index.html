@@ -3,77 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WE3 - استریم بومی</title>
+    <title>ماهان استریم - Mahan Stream</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        body { background: linear-gradient(to bottom, #0f172a, #1e2937); color: white; font-family: system-ui; }
-        .player { background: #000; }
+        body { background: linear-gradient(135deg, #f0f9ff, #e0f2fe); color: #0f172a; font-family: system-ui; }
+        .nav { background: #0ea5e9; color: white; }
+        .card { transition: all 0.3s; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); }
+        .live-dot { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center">
-    <div class="max-w-5xl mx-auto p-6">
-        <h1 class="text-5xl font-bold text-center mb-10 tracking-tight">WE3</h1>
-        <p class="text-center text-xl mb-8 opacity-80">پلتفرم استریم کاملا بومی - بدون سرویس خارجی</p>
-        
-        <div class="bg-zinc-900 rounded-3xl overflow-hidden shadow-2xl">
-            <div class="aspect-video bg-black relative">
-                <video id="player" class="w-full h-full" controls autoplay muted></video>
-                <div id="overlay" class="absolute inset-0 flex items-center justify-center hidden">
-                    <div class="text-center">
-                        <div class="w-16 h-16 border-4 border-green-500 border-t-transparent animate-spin mx-auto rounded-full mb-4"></div>
-                        <p class="text-green-400">در حال اتصال به پخش زنده...</p>
-                    </div>
-                </div>
+<body>
+    <nav class="nav py-4 shadow-lg">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+            <div class="flex items-center gap-3 text-2xl font-bold">
+                <i class="fas fa-broadcast-tower"></i> ماهان استریم
             </div>
-            
-            <div class="p-6">
-                <div class="flex gap-4">
-                    <input id="streamUrl" type="text" value="https://your-server/hls/stream.m3u8" 
-                           class="flex-1 bg-zinc-800 text-white px-4 py-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-green-500">
-                    <button onclick="loadStream()" 
-                            class="bg-green-600 hover:bg-green-700 px-8 py-3 rounded-2xl font-semibold transition">
-                        پخش
-                    </button>
-                </div>
-                
-                <div class="mt-6 text-sm opacity-70">
-                    <p><strong>راهنما:</strong> برای پخش واقعی، پروژه کامل رو روی سرور خودتون (VPS) با Docker اجرا کنید.</p>
-                    <p class="mt-2">GitHub: <a href="https://github.com/mahanclouds/we3" class="text-green-400 hover:underline">mahanclouds/we3</a></p>
-                </div>
+            <div class="flex gap-8 text-lg">
+                <a href="#streams" class="hover:underline">استریم‌ها</a>
+                <a href="#videos" class="hover:underline">ویدئوها</a>
+                <a href="#streamer" class="hover:underline">استример شو</a>
+                <a href="#" onclick="showLogin()" class="hover:underline">ورود / ثبت‌نام</a>
             </div>
         </div>
-        
-        <div class="text-center mt-12 text-xs opacity-50">
-            © WE3 - کاملا بومی و خودمیزبان
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-6 py-10">
+        <!-- Hero -->
+        <div class="text-center mb-16">
+            <h1 class="text-6xl font-bold mb-4 text-sky-600">پلتفرم استریم بومی ماهان</h1>
+            <p class="text-2xl text-slate-600">بدون نیاز به سرویس خارجی - کاملاً ایرانی و خودمیزبان</p>
+        </div>
+
+        <!-- Live Streams Section -->
+        <section id="streams" class="mb-20">
+            <h2 class="text-4xl font-bold mb-8 flex items-center gap-3"><i class="fas fa-broadcast-tower text-red-500 live-dot"></i> استریم‌های زنده</h2>
+            <div class="grid md:grid-cols-3 gap-6" id="live-grid">
+                <!-- JS populated -->
+            </div>
+        </section>
+
+        <!-- Videos Section -->
+        <section id="videos" class="mb-20">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-4xl font-bold">ویدئوها</h2>
+                <button onclick="showUpload()" class="bg-sky-600 hover:bg-sky-700 text-white px-6 py-3 rounded-2xl flex items-center gap-2 font-semibold">
+                    <i class="fas fa-upload"></i> آپلود ویدئو جدید
+                </button>
+            </div>
+            <div class="grid md:grid-cols-4 gap-6" id="video-grid">
+                <!-- JS populated -->
+            </div>
+        </section>
+
+        <!-- Streamer Section -->
+        <section id="streamer" class="bg-white rounded-3xl p-10 shadow-xl">
+            <h2 class="text-4xl font-bold mb-6 text-center">استример شو!</h2>
+            <div class="max-w-md mx-auto bg-sky-50 p-8 rounded-3xl">
+                <button onclick="becomeStreamer()" class="w-full bg-gradient-to-r from-sky-500 to-blue-600 text-white py-6 text-xl font-bold rounded-2xl hover:brightness-110 transition">
+                    ثبت‌نام به عنوان استример
+                </button>
+                <div id="streamer-info" class="hidden mt-8 p-6 bg-white rounded-2xl border border-sky-200">
+                    <p class="font-mono text-sm bg-slate-100 p-3 rounded mb-4">Stream Key: <span id="stream-key" class="font-bold text-sky-600">mahan_live_837492</span></p>
+                    <p class="font-mono text-sm bg-slate-100 p-3 rounded">RTMP Link: <span class="font-bold text-sky-600">rtmp://your-server/live</span></p>
+                    <button onclick="copyKey()" class="mt-4 w-full bg-white border border-sky-600 text-sky-600 py-3 rounded-xl">کپی کلید</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modals -->
+    <div id="login-modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-3xl max-w-md w-full mx-4">
+            <h3 class="text-2xl font-bold mb-6">ورود / ثبت‌نام</h3>
+            <input id="username" type="text" placeholder="نام کاربری" class="w-full p-4 border rounded-2xl mb-4">
+            <input id="password" type="password" placeholder="رمز عبور" class="w-full p-4 border rounded-2xl mb-6">
+            <button onclick="fakeLogin()" class="w-full bg-sky-600 text-white py-4 rounded-2xl font-bold">ورود</button>
+            <button onclick="hideModal('login-modal')" class="mt-4 w-full text-slate-500">بستن</button>
+        </div>
+    </div>
+
+    <div id="upload-modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-3xl max-w-md w-full mx-4">
+            <h3 class="text-2xl font-bold mb-6">آپلود ویدئو</h3>
+            <input type="file" id="video-file" class="w-full mb-6">
+            <input id="video-title" type="text" placeholder="عنوان ویدئو" class="w-full p-4 border rounded-2xl mb-6">
+            <button onclick="uploadVideo()" class="w-full bg-sky-600 text-white py-4 rounded-2xl font-bold">آپلود و ذخیره</button>
+            <button onclick="hideModal('upload-modal')" class="mt-4 w-full text-slate-500">لغو</button>
         </div>
     </div>
 
     <script>
-        function loadStream() {
-            const video = document.getElementById('player');
-            const url = document.getElementById('streamUrl').value;
-            const overlay = document.getElementById('overlay');
-            
+        // Fake data
+        function populateLives() {
+            const grid = document.getElementById('live-grid');
+            grid.innerHTML = `
+                <div class="card bg-white rounded-3xl overflow-hidden shadow">
+                    <div class="h-52 bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center text-white text-6xl"><i class="fas fa-play"></i></div>
+                    <div class="p-6">
+                        <div class="flex justify-between"><span class="text-red-500 font-bold">● LIVE</span><span>۱.۲K</span></div>
+                        <h3 class="font-bold text-xl mt-2">استریم تست ماهان</h3>
+                        <button onclick="watchLive()" class="mt-4 w-full bg-sky-600 text-white py-3 rounded-2xl">تماشا</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function populateVideos() {
+            const grid = document.getElementById('video-grid');
+            grid.innerHTML = `
+                <div class="card bg-white rounded-3xl overflow-hidden shadow">
+                    <div class="h-40 bg-slate-200 flex items-center justify-center text-4xl">🎥</div>
+                    <div class="p-4">
+                        <h4 class="font-semibold">ویدئو آموزشی</h4>
+                        <p class="text-sm text-slate-500">۱۰ دقیقه پیش</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showLogin() { document.getElementById('login-modal').classList.remove('hidden'); }
+        function hideModal(id) { document.getElementById(id).classList.add('hidden'); }
+        function fakeLogin() { alert('✅ وارد شدی! حالا می‌تونی استример بشی.'); hideModal('login-modal'); }
+
+        function becomeStreamer() {
+            document.getElementById('streamer-info').classList.remove('hidden');
+            alert('🎉 تبریک! حالا استример شدی. کلیدت رو کپی کن و با OBS پخش کن.');
+        }
+
+        function copyKey() {
+            const key = document.getElementById('stream-key').textContent;
+            navigator.clipboard.writeText(key);
+            alert('کلید کپی شد: ' + key);
+        }
+
+        function showUpload() {
+            document.getElementById('upload-modal').classList.remove('hidden');
+        }
+
+        function uploadVideo() {
+            const title = document.getElementById('video-title').value || 'ویدئوی جدید';
+            alert(`✅ ویدئو "${title}" با موفقیت آپلود و ذخیره شد! (در نسخه واقعی روی سرور ذخیره می‌شه)`);
+            hideModal('upload-modal');
+            populateVideos();
+        }
+
+        function watchLive() {
+            const playerHTML = `
+                <div class="fixed inset-0 bg-black z-50 flex items-center justify-center">
+                    <div class="max-w-5xl w-full">
+                        <video id="main-player" class="w-full" controls autoplay></video>
+                        <button onclick="this.parentElement.parentElement.remove()" class="absolute top-4 right-4 bg-red-600 text-white px-6 py-2 rounded-full">بستن</button>
+                    </div>
+                </div>
+            `;
+            const div = document.createElement('div');
+            div.innerHTML = playerHTML;
+            document.body.appendChild(div);
+            const vid = document.getElementById('main-player');
             if (Hls.isSupported()) {
                 const hls = new Hls();
-                hls.loadSource(url);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = url;
-                video.play();
+                hls.loadSource('https://test-streams.mux.dev/x264_720p_1500kbs_30fps.mp4/index.m3u8');
+                hls.attachMedia(vid);
             }
-            overlay.classList.remove('hidden');
-            setTimeout(() => overlay.classList.add('hidden'), 3000);
         }
-        
-        // Auto demo
+
+        // Init
         window.onload = () => {
-            setTimeout(() => {
-                document.getElementById('streamUrl').value = 'https://test-streams.mux.dev/x264_720p_1500kbs_30fps.mp4/index.m3u8';
-                loadStream();
-            }, 800);
+            populateLives();
+            populateVideos();
         };
     </script>
 </body>
