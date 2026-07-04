@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>WE3 - پخش زنده</title>
+    <style>
+        body { font-family: Tahoma; background: #111; color: white; text-align: center; }
+        video { max-width: 100%; margin: 20px; }
+    </style>
+</head>
+<body>
+    <h1>WE3 - استریم بومی</h1>
+    <video id="player" controls autoplay></video>
+    <script>
+        const video = document.getElementById('player');
+        video.src = '/hls/stream.m3u8';
+        if (Hls.isSupported()) {
+            const hls = new Hls();
+            hls.loadSource('/hls/stream.m3u8');
+            hls.attachMedia(video);
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <p>برای پخش زنده از OBS به rtmp://your-server/live/stream متصل شوید</p>
+</body>
+</html>
