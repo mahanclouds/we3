@@ -2,25 +2,79 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>WE3 - پخش زنده</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WE3 - استریم بومی</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
-        body { font-family: Tahoma; background: #111; color: white; text-align: center; }
-        video { max-width: 100%; margin: 20px; }
+        body { background: linear-gradient(to bottom, #0f172a, #1e2937); color: white; font-family: system-ui; }
+        .player { background: #000; }
     </style>
 </head>
-<body>
-    <h1>WE3 - استریم بومی</h1>
-    <video id="player" controls autoplay></video>
+<body class="min-h-screen flex items-center justify-center">
+    <div class="max-w-5xl mx-auto p-6">
+        <h1 class="text-5xl font-bold text-center mb-10 tracking-tight">WE3</h1>
+        <p class="text-center text-xl mb-8 opacity-80">پلتفرم استریم کاملا بومی - بدون سرویس خارجی</p>
+        
+        <div class="bg-zinc-900 rounded-3xl overflow-hidden shadow-2xl">
+            <div class="aspect-video bg-black relative">
+                <video id="player" class="w-full h-full" controls autoplay muted></video>
+                <div id="overlay" class="absolute inset-0 flex items-center justify-center hidden">
+                    <div class="text-center">
+                        <div class="w-16 h-16 border-4 border-green-500 border-t-transparent animate-spin mx-auto rounded-full mb-4"></div>
+                        <p class="text-green-400">در حال اتصال به پخش زنده...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-6">
+                <div class="flex gap-4">
+                    <input id="streamUrl" type="text" value="https://your-server/hls/stream.m3u8" 
+                           class="flex-1 bg-zinc-800 text-white px-4 py-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <button onclick="loadStream()" 
+                            class="bg-green-600 hover:bg-green-700 px-8 py-3 rounded-2xl font-semibold transition">
+                        پخش
+                    </button>
+                </div>
+                
+                <div class="mt-6 text-sm opacity-70">
+                    <p><strong>راهنما:</strong> برای پخش واقعی، پروژه کامل رو روی سرور خودتون (VPS) با Docker اجرا کنید.</p>
+                    <p class="mt-2">GitHub: <a href="https://github.com/mahanclouds/we3" class="text-green-400 hover:underline">mahanclouds/we3</a></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-12 text-xs opacity-50">
+            © WE3 - کاملا بومی و خودمیزبان
+        </div>
+    </div>
+
     <script>
-        const video = document.getElementById('player');
-        video.src = '/hls/stream.m3u8';
-        if (Hls.isSupported()) {
-            const hls = new Hls();
-            hls.loadSource('/hls/stream.m3u8');
-            hls.attachMedia(video);
+        function loadStream() {
+            const video = document.getElementById('player');
+            const url = document.getElementById('streamUrl').value;
+            const overlay = document.getElementById('overlay');
+            
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(url);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = url;
+                video.play();
+            }
+            overlay.classList.remove('hidden');
+            setTimeout(() => overlay.classList.add('hidden'), 3000);
         }
+        
+        // Auto demo
+        window.onload = () => {
+            setTimeout(() => {
+                document.getElementById('streamUrl').value = 'https://test-streams.mux.dev/x264_720p_1500kbs_30fps.mp4/index.m3u8';
+                loadStream();
+            }, 800);
+        };
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <p>برای پخش زنده از OBS به rtmp://your-server/live/stream متصل شوید</p>
 </body>
 </html>
